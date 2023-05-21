@@ -1,6 +1,8 @@
 if SERVER then
 	local meta = FindMetaTable("Player")
 
+	local allowedspawn = CreateConVar("beatrun_allow_player_spawn", "1", { FCVAR_ARCHIVE, FCVAR_USERINFO, FCVAR_DONTRECORD }, "asdsad")
+
 	util.AddNetworkString("SPParkourEvent")
 
 	local spawn = {
@@ -16,7 +18,7 @@ if SERVER then
 	}
 
 	local function BlockSpawn(ply)
-		if not ply:IsSuperAdmin() then
+		if not ply:IsSuperAdmin() and not allowedspawn:GetBool() then
 			return false
 		end
 	end
@@ -28,10 +30,11 @@ if SERVER then
 	hook.Add("IsSpawnpointSuitable", "NoSpawnFrag", function (ply)
 		return true
 	end)
+
 	hook.Add("AllowPlayerPickup", "AllowAdminsPickUp", function (ply, ent)
 		local sa = ply:IsSuperAdmin()
 
-		if not sa then
+		if not sa and not allowedspawn:GetBool() then
 			return false
 		end
 	end)

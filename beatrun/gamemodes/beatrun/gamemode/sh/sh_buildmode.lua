@@ -445,7 +445,7 @@ if SERVER then
 			phys:EnableMotion(false)
 			phys:Sleep()
 			a:PhysicsDestroy()
-			a:SetHealth(inf)
+			a:SetHealth(math.huge)
 		else
 			local a = ents.Create(prop)
 			local prespawn = entplacefunc_prespawn[prop]
@@ -496,7 +496,7 @@ if SERVER then
 			phys:EnableMotion(false)
 			phys:Sleep()
 			a:PhysicsDestroy()
-			a:SetHealth(inf)
+			a:SetHealth(math.huge)
 		end
 
 		for k, v in pairs(selectedents) do
@@ -573,7 +573,7 @@ if SERVER then
 			phys:EnableMotion(false)
 			phys:Sleep()
 			a:PhysicsDestroy()
-			a:SetHealth(inf)
+			a:SetHealth(math.huge)
 		end
 	end)
 	net.Receive("BuildMode_Checkpoint", function (len, ply)
@@ -683,7 +683,7 @@ if SERVER then
 			phys:EnableMotion(false)
 			phys:Sleep()
 			a:PhysicsDestroy()
-			a:SetHealth(inf)
+			a:SetHealth(math.huge)
 		end
 
 		for k, v in ipairs(cp) do

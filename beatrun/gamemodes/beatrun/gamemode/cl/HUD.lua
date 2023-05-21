@@ -291,11 +291,11 @@ local function sortleaderboard(a, b)
 		return atime > btime
 	else
 		if atime == 0 then
-			atime = inf
+			atime = math.huge
 		end
 
 		if btime == 0 then
-			btime = inf
+			btime = math.huge
 		end
 
 		return atime < btime

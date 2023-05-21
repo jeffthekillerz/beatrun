@@ -59,11 +59,11 @@ local function HideNearby(ply)
 
 		ang:RotateAroundAxis(ang:Forward(), 90)
 		ang:RotateAroundAxis(ang:Right(), 90)
-		cam.Start3D2D(pos, Angle(0, ang.y, 90), math.max(2.5 * Distance / 2000, 0.5))
-		cam.IgnoreZ(true)
-		draw.DrawText(ply:Nick(), "BeatrunHUD", 2, 2, color, TEXT_ALIGN_CENTER)
-		cam.IgnoreZ(false)
-		cam.End3D2D()
+		//cam.Start3D2D(pos, Angle(0, ang.y, 90), math.max(2.5 * Distance / 2000, 0.5))
+		//cam.IgnoreZ(true)
+		//draw.DrawText(ply:Nick(), "BeatrunHUD", 2, 2, color, TEXT_ALIGN_CENTER)
+		//cam.IgnoreZ(false)
+		//cam.End3D2D()
 
 		return dontdraw
 	end

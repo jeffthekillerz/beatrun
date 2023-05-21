@@ -181,8 +181,8 @@ hook.Add("SetupMove", "Grapple", function (ply, mv, cmd)
 			tr.endpos = mv:GetOrigin()
 			local mins, maxs = ply:GetHull()
 
-			mins:Mul(1.01)
-			maxs:Mul(1.01)
+			mins:Mul(1.2)
+			maxs:Mul(1.2)
 
 			tr.mins = mins
 			tr.maxs = maxs
