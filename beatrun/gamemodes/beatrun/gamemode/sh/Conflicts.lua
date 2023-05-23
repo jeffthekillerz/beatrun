@@ -1,17 +1,15 @@
-local problematichooks = {
-	SetupMove = {
-		"vmanip_vault"
-	}
+﻿local problematichooks = {
+    SetupMove = {"vmanip_vault"}
 }
 
 local function RemoveConflicting()
-	for k, v in pairs(problematichooks) do
-		for l, b in ipairs(v) do
-			hook.Remove(k, b)
-		end
-	end
+    for k, v in pairs(problematichooks) do
+        for l, b in ipairs(v) do
+            hook.Remove(k, b)
+        end
+    end
 
-	hook.Remove("InitPostEntity", "RemoveConflicting")
+    hook.Remove("InitPostEntity", "RemoveConflicting")
 end
 
 hook.Add("InitPostEntity", "RemoveConflicting", RemoveConflicting)

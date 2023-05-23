@@ -1,104 +1,98 @@
-GM_DATATHEFT = 1
+﻿GM_DATATHEFT = 1
+
 DATATHEFT_LOADOUTS = {
-	{
-		"weapon_ss2_colt",
-		"weapon_ss2_circularsaw"
-	}
+    {"weapon_ss2_colt", "weapon_ss2_circularsaw"}
 }
 
 if SERVER then
-	util.AddNetworkString("DataTheft_Start")
-	util.AddNetworkString("DataTheft_Sync")
+    util.AddNetworkString("DataTheft_Start")
+    util.AddNetworkString("DataTheft_Sync")
 
-	function Beatrun_StartDataTheft()
-		SetGlobalBool(GM_DATATHEFT, true)
-		net.Start("DataTheft_Start")
-		net.Broadcast()
+    function Beatrun_StartDataTheft()
+        SetGlobalBool(GM_DATATHEFT, true)
+        net.Start("DataTheft_Start")
+        net.Broadcast()
 
-		for k, v in ipairs(player.GetAll()) do
-			v:DataTheft_Bank()
-			v:SetNW2Int("DataCubes", 0)
-			v:SetNW2Int("DataBanked", 0)
-			v:SetCollisionGroup(COLLISION_GROUP_PLAYER)
-			v:SetCustomCollisionCheck(false)
+        for k, v in ipairs(player.GetAll()) do
+            v:DataTheft_Bank()
+            v:SetNW2Int("DataCubes", 0)
+            v:SetNW2Int("DataBanked", 0)
+            v:SetCollisionGroup(COLLISION_GROUP_PLAYER)
+            v:SetCustomCollisionCheck(false)
 
-			if v:GetMoveType() == MOVETYPE_NOCLIP then
-				v:SetMoveType(MOVETYPE_WALK)
-				v:Spawn()
-			else
-				for l, b in ipairs(DATATHEFT_LOADOUTS[math.random(#DATATHEFT_LOADOUTS)]) do
-					local wep = v:Give(b)
+            if v:GetMoveType() == MOVETYPE_NOCLIP then
+                v:SetMoveType(MOVETYPE_WALK)
+                v:Spawn()
+            else
+                for l, b in ipairs(DATATHEFT_LOADOUTS[math.random(#DATATHEFT_LOADOUTS)]) do
+                    local wep = v:Give(b)
+                    v:GiveAmmo(300, wep:GetPrimaryAmmoType())
+                end
+            end
+        end
+    end
 
-					v:GiveAmmo(300, wep:GetPrimaryAmmoType())
-				end
-			end
-		end
-	end
+    function Beatrun_StopDataTheft()
+        SetGlobalBool(GM_DATATHEFT, false)
+    end
 
-	function Beatrun_StopDataTheft()
-		SetGlobalBool(GM_DATATHEFT, false)
-	end
+    local function DataTheftSync(ply)
+        if GetGlobalBool(GM_DATATHEFT) and not ply.DataTheftSynced then
+            net.Start("Infection_Sync")
+            net.WriteFloat(Infection_StartTime)
+            net.WriteFloat(Infection_EndTime)
+            net.Send(ply)
+            ply.DataTheftSynced = true
+        end
+    end
 
-	local function DataTheftSync(ply)
-		if GetGlobalBool(GM_DATATHEFT) and not ply.DataTheftSynced then
-			net.Start("Infection_Sync")
-			net.WriteFloat(Infection_StartTime)
-			net.WriteFloat(Infection_EndTime)
-			net.Send(ply)
+    hook.Add("PlayerSpawn", "DataTheftSync", DataTheftSync)
 
-			ply.DataTheftSynced = true
-		end
-	end
+    local function DataTheftDeath(ply, inflictor, attacker)
+        if GetGlobalBool(GM_DATATHEFT) then
+            local datacount = ply:GetNW2Int("DataCubes", 0)
 
-	hook.Add("PlayerSpawn", "DataTheftSync", DataTheftSync)
+            if datacount > 0 then
+                local pos = ply:GetPos() + Vector(0, 0, 32)
 
-	local function DataTheftDeath(ply, inflictor, attacker)
-		if GetGlobalBool(GM_DATATHEFT) then
-			local datacount = ply:GetNW2Int("DataCubes", 0)
+                for i = 1, datacount + 1 do
+                    local datacube = ents.Create("br_datacube")
+                    datacube:SetPos(pos)
+                    datacube:Spawn()
+                end
 
-			if datacount > 0 then
-				local pos = ply:GetPos() + Vector(0, 0, 32)
+                ply:SetNW2Int("DataCubes", 0)
+            elseif IsValid(attacker) and attacker ~= ply then
+                local pos = ply:GetPos() + Vector(0, 0, 32)
+                local datacube = ents.Create("br_datacube")
+                datacube:SetPos(pos)
+                datacube:Spawn()
+            end
+        end
+    end
 
-				for i = 1, datacount + 1 do
-					local datacube = ents.Create("br_datacube")
-
-					datacube:SetPos(pos)
-					datacube:Spawn()
-				end
-
-				ply:SetNW2Int("DataCubes", 0)
-			elseif IsValid(attacker) and attacker ~= ply then
-				local pos = ply:GetPos() + Vector(0, 0, 32)
-				local datacube = ents.Create("br_datacube")
-
-				datacube:SetPos(pos)
-				datacube:Spawn()
-			end
-		end
-	end
-
-	hook.Add("PlayerDeath", "DataTheftDeath", DataTheftDeath)
+    hook.Add("PlayerDeath", "DataTheftDeath", DataTheftDeath)
 end
 
 if CLIENT then
-	local function DataTheftHUDName()
-		if GetGlobalBool(GM_DATATHEFT) then
-			local datacubes = LocalPlayer():GetNW2Int("DataCubes", 0)
+    local function DataTheftHUDName()
+        if GetGlobalBool(GM_DATATHEFT) then
+            local datacubes = LocalPlayer():GetNW2Int("DataCubes", 0)
 
-			return "Data Theft (" .. datacubes .. ")"
-		else
-			hook.Remove("BeatrunHUDCourse", "DataTheftHUDName")
-		end
-	end
+            return "Data Theft (" .. datacubes .. ")"
+        else
+            hook.Remove("BeatrunHUDCourse", "DataTheftHUDName")
+        end
+    end
 
-	net.Receive("DataTheft_Sync", function ()
-		hook.Add("BeatrunHUDCourse", "DataTheftHUDName", DataTheftHUDName)
-	end)
+    net.Receive("DataTheft_Sync", function()
+        hook.Add("BeatrunHUDCourse", "DataTheftHUDName", DataTheftHUDName)
+    end)
 
-	local chatcolor = Color(200, 200, 200)
+    local chatcolor = Color(200, 200, 200)
 
-	net.Receive("DataTheft_Start", function ()
-		hook.Add("BeatrunHUDCourse", "DataTheftHUDName", DataTheftHUDName)
-		chat.AddText(chatcolor, "Data Theft! Kill players to collect data, deposit data in banks")
-	end)
+    net.Receive("DataTheft_Start", function()
+        hook.Add("BeatrunHUDCourse", "DataTheftHUDName", DataTheftHUDName)
+        chat.AddText(chatcolor, "Data Theft! Kill players to collect data, deposit data in banks")
+    end)
 end
