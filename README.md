@@ -9,6 +9,7 @@ changes from the original:<br>
 removed pesky nametags<br>
 added convar beatrun_domain to change the online course server<br>
 added beatrun_allow_player_spawn to allow players to spawn anything in mp<br>
+fixed retarded collision bug (vs entities and vs walls)<br>
 fixed a few errors<br>
 
 </p>
