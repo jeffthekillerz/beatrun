@@ -1,3 +1,6 @@
+# This version is broken and wont be fixed. Visit https://github.com/JonnyBro/beatrun/ for an up-to-date version!
+
+
 # beatrun
 <p>
 Full source code of Datae's beatrun.
